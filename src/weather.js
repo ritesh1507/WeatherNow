@@ -3,6 +3,7 @@ import axios from "axios"
 //https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&current=temperature_2m,weather_code,wind_speed_10m&hourly=temperature_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,rain_sum&timeformat=unixtime&timezone=Asia%2FSingapore
 //https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&current=temperature_2m,weather_code,wind_speed_10m&hourly=temperature_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,rain_sum,wind_speed_10m_max&timeformat=unixtime&timezone=Asia%2FSingapore
 export async function getWeather(lat, lon, timezone){
+    console.log("data fetched from api")
     return axios
       .get(
         "https://api.open-meteo.com/v1/forecast?current=temperature_2m,weather_code,wind_speed_10m,is_day&hourly=temperature_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,is_day&daily=weather_code,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,rain_sum,wind_speed_10m_max&timeformat=unixtime",
@@ -13,15 +14,18 @@ export async function getWeather(lat, lon, timezone){
             timezone,
           },
         }
-        // )
       )
       .then(({ data }) => {
         return {
           current: parseCurrentWeather(data),
           daily: parseDailyWeather(data),
           hourly: parseHourlyWeather(data),
-        };
-      });
+        }
+      })
+      .catch(e=>{
+        console.error(e);
+        alert("error in fetching data")
+      })
 }
 
 function parseCurrentWeather({current,daily}){

@@ -4,14 +4,24 @@ import {imageMap} from "./imageMapping"
 
 navigator.geolocation.getCurrentPosition(positionSuccess, positionError)
 
-function positionSuccess({coords}){
-    getWeather(coords.latitude, coords.longitude, Intl.DateTimeFormat().resolvedOptions().timeZone)
-    .then(renderWeather)
-        .catch(e=>{
-            console.error(e)
-            alert("Error getting weather.")
+function fetchAndRenderWeather(latitude, longitude, timeZone){
+    getWeather(latitude, longitude, timeZone)
+        .then(renderWeather)
+        .catch(e => {
+            console.error(e);
+            alert("Error getting weather.");
         })
-    }
+}
+
+function positionSuccess({coords}){
+    const {latitude, longitude} = coords;
+    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    fetchAndRenderWeather(latitude, longitude, timeZone);
+    //fetches data every minute from open-meteo server
+    setInterval(()=>{
+        fetchAndRenderWeather(latitude, longitude, timeZone);
+    },60000);
+}
 
 function positionError(){
     alert("There was an error getting your location. Please refresh the page and allow us to use your location.")
